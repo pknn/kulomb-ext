@@ -8,6 +8,7 @@ lazy val root = (project in file(".")).enablePlugins(PlayScala)
 scalaVersion := "2.13.5"
 
 libraryDependencies += guice
+libraryDependencies += ws
 libraryDependencies += "org.scalatestplus.play" %% "scalatestplus-play" % "5.0.0" % Test
 libraryDependencies += "com.softwaremill.sttp.client3" %% "core" % "3.3.0-RC1"
 
