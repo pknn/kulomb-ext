@@ -1,6 +1,5 @@
 package presenters
 
-import jsonBodies.TaskCreationResultBody
 import models.TaskPad
 import play.api.libs.json.JsonNaming.SnakeCase
 import play.api.libs.json.{Format, Json, JsonConfiguration}
@@ -27,13 +26,4 @@ object TaskPadPresenter {
 	                                                                createdAt = taskPad.createdAt.toString,
 	                                                                updatedAt = taskPad.updatedAt.toString)
 
-	def from(taskCreationResultBody: TaskCreationResultBody): TaskPadPresenter = {
-		TaskPadPresenter(id = taskCreationResultBody.id,
-		                 task = taskCreationResultBody.task,
-		                 creator = taskCreationResultBody.creator,
-		                 accessKey = taskCreationResultBody.accessKey,
-		                 secretKey = taskCreationResultBody.secretKey,
-		                 createdAt = taskCreationResultBody.createdAt,
-		                 updatedAt = taskCreationResultBody.updatedAt)
-	}
 }
