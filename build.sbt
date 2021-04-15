@@ -13,6 +13,9 @@ libraryDependencies += "com.softwaremill.sttp.client3" %% "akka-http-backend" % 
 libraryDependencies += "org.scalatestplus.play" %% "scalatestplus-play" % "5.0.0" % Test
 libraryDependencies += "com.softwaremill.sttp.client3" %% "core" % "3.3.0-RC1"
 
+enablePlugins(DockerPlugin)
+dockerUsername := sys.env.get("DOCKER_USERNAME")
+
 // Adds additional packages into Twirl
 //TwirlKeys.templateImports += "dev.pknn.controllers._"
 
