@@ -30,6 +30,7 @@ jobs:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
   spinup:
     runs-on: ubuntu-latest
+    needs: build
     steps:
       - name: SSH Remote Commands
         uses: appleboy/ssh-action@v0.1.4
