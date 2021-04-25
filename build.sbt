@@ -14,6 +14,7 @@ libraryDependencies += "org.scalatestplus.play" %% "scalatestplus-play" % "5.0.0
 libraryDependencies += "com.softwaremill.sttp.client3" %% "core" % "3.3.0-RC1"
 
 enablePlugins(DockerPlugin)
+javaOptions in Universal ++= Seq("-Dpidfile.path=/dev/null")
 dockerUsername := sys.env.get("DOCKER_USERNAME")
 
 // Adds additional packages into Twirl
