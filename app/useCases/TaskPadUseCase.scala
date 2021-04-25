@@ -5,7 +5,6 @@ import com.google.inject.{Inject, Singleton}
 import helpers.TaskCreationSourceMapper
 import jsonBodies.TaskCreationBody
 import play.api.libs.json.{JsValue, Json}
-import sttp.client3.Response
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -15,9 +14,12 @@ class TaskPadUseCase @Inject()(proxyClient: ProxyClient) {
 	          (implicit ec: ExecutionContext): Future[JsValue] = {
 		val mappedBody: TaskCreationBody = TaskCreationSourceMapper.map(taskCreationBody)
 		val jsonBody: JsValue = Json.toJson(mappedBody)
-		val result: Future[Response[String]] = proxyClient.execute(uri, method, headers, jsonBody)
-		result.foreach(response => println(Json.parse(response.body)))
-		result.map(response => Json
-			.parse(response.body))
+
+		proxyClient.execute(uri, method, headers, jsonBody)
 	}
+
+	def get(uri: String, method: String, headers: Map[String, String])(implicit ec: ExecutionContext): Future[JsValue] = {
+		proxyClient.execute(uri, method, headers)
+	}
+
 }

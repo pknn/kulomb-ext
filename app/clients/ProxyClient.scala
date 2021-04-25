@@ -7,7 +7,7 @@ import play.api.http.HttpEntity
 import play.api.libs.json.{JsObject, JsValue, Json}
 import play.api.libs.ws.WSClient
 import play.api.mvc.{AnyContent, Request, ResponseHeader, Result}
-import sttp.client3.{Response, quickRequest}
+import sttp.client3.{Identity, RequestT, quickRequest}
 import sttp.model.{MediaType, Method, Uri}
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -35,8 +35,6 @@ class ProxyClient @Inject()(ws: WSClient, akkaBackend: AkkaBackend)
 			case None => JsObject.empty
 		}
 
-		println("Huh?")
-
 		ws.url(proxyUrl + request.uri)
 			.withMethod(request.method)
 			.withHttpHeaders(request.headers.toSimpleMap.toList: _*)
@@ -58,7 +56,22 @@ class ProxyClient @Inject()(ws: WSClient, akkaBackend: AkkaBackend)
 			}
 	}
 
-	def execute[B](uri: String, method: String, headers: Map[String, String], body: JsValue): Future[Response[String]] = {
+	def execute(uri: String, method: String, headers: Map[String, String]): Future[JsValue] =
+		request(uri, method, headers)
+			.send(akkaBackend.getInstance)
+			.map(response => Json.parse(response.body))
+
+
+	def execute[B](uri: String, method: String, headers: Map[String, String], body: JsValue): Future[JsValue] =
+		request(uri, method, headers)
+			.body(Json.stringify(body))
+			.send(akkaBackend.getInstance)
+			.map(response => Json.parse(response.body))
+
+
+	private def request[B](uri: String,
+	                       method: String,
+	                       headers: Map[String, String]): RequestT[Identity, String, Any] = {
 		val uris: Uri = Uri(host = proxyHost, port = proxyPort, uri.split("/").toSeq.filter(_.nonEmpty))
 		val methods: Method = getMethod(method)
 
@@ -66,8 +79,6 @@ class ProxyClient @Inject()(ws: WSClient, akkaBackend: AkkaBackend)
 			.headers(headers)
 			.contentType(MediaType.ApplicationJson)
 			.followRedirects(true)
-			.body(Json.stringify(body))
-			.send(akkaBackend.getInstance)
 
 	}
 }

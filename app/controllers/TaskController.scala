@@ -4,7 +4,7 @@ import com.google.inject.{Inject, Singleton}
 import commons.ApiResults
 import jsonBodies.TaskCreationBody
 import play.api.libs.json.JsValue
-import play.api.mvc.{Action, BaseController, ControllerComponents}
+import play.api.mvc.{Action, AnyContent, BaseController, ControllerComponents}
 import useCases.TaskPadUseCase
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -21,4 +21,11 @@ class TaskController @Inject()(val controllerComponents: ControllerComponents, t
 		ApiResults.async(result)
 	}
 
+	def get: Action[AnyContent] = Action.async { implicit request =>
+		val result = taskPadUseCase.get(request.uri,
+		                                request.method,
+		                                request.headers.toSimpleMap)
+
+		ApiResults.async(result)
+	}
 }
