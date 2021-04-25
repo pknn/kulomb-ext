@@ -17,9 +17,9 @@ import scala.util.Properties
 @Singleton
 class ProxyClient @Inject()(ws: WSClient, akkaBackend: AkkaBackend)
                            (implicit ec: ExecutionContext) {
-	private val proxyPort = 8000
-	private val proxyHost = "localhost"
-	private val proxyUrl = s"http://${Properties.envOrElse("PROXY_HOST", s"$proxyHost:$proxyPort")}"
+	private val proxyPort = Properties.envOrElse("PROXY_PORT", "8000").toInt
+	private val proxyHost = Properties.envOrElse("PROXY_HOST", "localhost")
+	private val proxyUrl = s"http://$proxyHost:$proxyPort"
 
 	private def getMethod(method: String): Method = method match {
 		case "GET" => Method.GET
@@ -65,6 +65,7 @@ class ProxyClient @Inject()(ws: WSClient, akkaBackend: AkkaBackend)
 		quickRequest.method(methods, uris)
 			.headers(headers)
 			.contentType(MediaType.ApplicationJson)
+			.followRedirects(true)
 			.body(Json.stringify(body))
 			.send(akkaBackend.getInstance)
 
