@@ -8,6 +8,7 @@ import play.api.routing.sird._
 
 class TaskRouter @Inject()(taskController: TaskController) extends SimpleRouter {
 	override def routes: Routes = {
+		case GET(p"/") | GET(p"/$_") => taskController.get
 		case POST(p"/") => taskController.create
 	}
 }
