@@ -29,11 +29,17 @@ jobs:
       run: sbt docker:publish
       env: 
         DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-    - name: Install SSH Key
-      uses: shimataro/ssh-key-action@v2
+    - name: SSH Remote Commands
+      uses: appleboy/ssh-action@v0.1.4
       with:
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USER }}
         key: ${{ secrets.SSH_PRIV_KEY }}
-        known_hosts: unnecessary
-    - name: Spin Up
-      run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} -vvv -oStrictHostKeyChecking=no "cd elabsheet && docker-compose stop && docker-compose pull && docker-compose up -d"
-        
+        proxy_host: ${{ secrets.SSH_PROXY_HOST }}
+        proxy_username: ${{ secrets.SSH_USER }}
+        proxy_key: ${{ secrets.SSH_PROXY_PRIV_KEY }}
+        script: |
+          cd elabsheet
+          docker-compose down
+          docker-compose pull
+          docker-compose up -d
