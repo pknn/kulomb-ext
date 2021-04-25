@@ -35,5 +35,5 @@ jobs:
         key: ${{ secrets.SSH_PRIV_KEY }}
         known_hosts: unnecessary
     - name: Spin Up
-      run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd elabsheet && docker-compose stop && docker-compose pull && docker-compose up -d"
+      run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} -oStrictHostKeyChecking=no "cd elabsheet && docker-compose stop && docker-compose pull && docker-compose up -d"
         
