@@ -16,6 +16,7 @@ libraryDependencies += "com.softwaremill.sttp.client3" %% "core" % "3.3.0-RC1"
 enablePlugins(DockerPlugin)
 javaOptions in Universal ++= Seq("-Dpidfile.path=/dev/null")
 dockerUsername := sys.env.get("DOCKER_USERNAME")
+dockerUpdateLatest := true
 
 // Adds additional packages into Twirl
 //TwirlKeys.templateImports += "dev.pknn.controllers._"

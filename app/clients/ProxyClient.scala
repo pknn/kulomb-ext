@@ -11,14 +11,15 @@ import sttp.client3.{Response, quickRequest}
 import sttp.model.{MediaType, Method, Uri}
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.Properties
 
 
 @Singleton
 class ProxyClient @Inject()(ws: WSClient, akkaBackend: AkkaBackend)
                            (implicit ec: ExecutionContext) {
-	private val proxyHost = "localhost"
 	private val proxyPort = 8000
-	private val proxyUrl = s"http://$proxyHost:$proxyPort"
+	private val proxyHost = "localhost"
+	private val proxyUrl = s"http://${Properties.envOrElse("PROXY_HOST", s"$proxyHost:$proxyPort")}"
 
 	private def getMethod(method: String): Method = method match {
 		case "GET" => Method.GET
