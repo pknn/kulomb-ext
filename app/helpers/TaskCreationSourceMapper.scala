@@ -7,6 +7,9 @@ import scala.xml.XML.loadString
 
 object TaskCreationSourceMapper {
 
+	def map(taskCreationBody: TaskCreationBody): TaskCreationBody =
+		taskCreationBody.copy(source = parse(taskCreationBody.source, taskCreationBody.testCases))
+
 	private def getClassName(node: Node) = (node \ "@class").toString()
 
 	private def getEnclosure(code: String, modifier: String): String =
@@ -16,14 +19,15 @@ object TaskCreationSourceMapper {
 			.concat("\n::elab:endcode\n")
 			.concat("::elab:begincode\n")
 
+	private def parseSpan(elem: Node) = getClassName(elem) match {
+		case "sourcespan" => s"{{ ${elem.child.map(nodeToText).mkString("")} }}"
+		case "hidespan" => getEnclosure(elem.child.map(nodeToText).mkString(""), "hidden")
+		case "boxspan" => getEnclosure(elem.child.map(nodeToText).mkString(""), "blank")
+	}
+
 	private def nodeToText(node: Node): String = node match {
 		case <br/> => "\n"
-		case elem if elem.label == "span" && getClassName(elem) == "sourcespan" =>
-			s"{{ ${elem.child.map(nodeToText).mkString("")} }}"
-		case elem if elem.label == "span" && getClassName(elem) == "hidespan" =>
-			getEnclosure(elem.child.map(nodeToText).mkString(""), "hidden")
-		case elem if elem.label == "span" && getClassName(elem) == "boxspan" =>
-			getEnclosure(elem.child.map(nodeToText).mkString(""), "blank")
+		case elem if elem.label == "span" => parseSpan(elem)
 		case elem => elem.text
 	}
 
@@ -42,7 +46,4 @@ object TaskCreationSourceMapper {
 			.concat(testCases.map(testCaseToText))
 			.mkString("")
 	}
-
-	def map(taskCreationBody: TaskCreationBody): TaskCreationBody =
-		taskCreationBody.copy(source = parse(taskCreationBody.source, taskCreationBody.testCases))
 }

@@ -2,9 +2,12 @@ package controllers
 
 import com.google.inject.{Inject, Singleton}
 import commons.ApiResults
-import jsonBodies.TaskCreationBody
+import helpers.TaskCreationResponseMapper
+import jsonBodies.{TaskCreationBody, TaskPadCreationResponse}
+import models.TaskPad
 import play.api.libs.json.JsValue
 import play.api.mvc.{Action, AnyContent, BaseController, ControllerComponents}
+import presenters.TaskPadPresenter
 import useCases.TaskPadUseCase
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -18,7 +21,14 @@ class TaskController @Inject()(val controllerComponents: ControllerComponents, t
 		                                                    request.headers.toSimpleMap,
 		                                                    request.body)
 
-		ApiResults.async(result)
+		val taskPad: Future[Option[TaskPad]] = result.map(_.validate[TaskPadCreationResponse]
+			                                                  .asOpt
+			                                                  .map(TaskCreationResponseMapper.map)
+		                                                  )
+
+		val taskPadPresenter = taskPad.map(_.map(TaskPadPresenter.from))
+
+		ApiResults.async(taskPadPresenter)
 	}
 
 	def get: Action[AnyContent] = Action.async { implicit request =>

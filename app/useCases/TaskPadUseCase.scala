@@ -15,7 +15,9 @@ class TaskPadUseCase @Inject()(proxyClient: ProxyClient) {
 		val mappedBody: TaskCreationBody = TaskCreationSourceMapper.map(taskCreationBody)
 		val jsonBody: JsValue = Json.toJson(mappedBody)
 
-		proxyClient.execute(uri, method, headers, jsonBody)
+		val result = proxyClient.execute(uri, method, headers, jsonBody)
+
+		result
 	}
 
 	def get(uri: String, method: String, headers: Map[String, String])(implicit ec: ExecutionContext): Future[JsValue] = {
