@@ -3,8 +3,8 @@ package helpers
 import jsonBodies.TaskPadCreationResponse
 import models.TaskPad
 
+import scala.xml.Node
 import scala.xml.XML.loadString
-import scala.xml.{Node, Text}
 
 object TaskCreationResponseMapper {
 	private def getInputName(elem: Node): String = (elem \ "@name").toString()
@@ -18,25 +18,15 @@ object TaskCreationResponseMapper {
 			.replaceAll("\n", "<br />")
 			.replaceAll("\t", "&nbsp;")
 
-	private def nodeToElabNode(elem: Node): Node = elem match {
-		case elem if elem.label == "span" => Text(unescape(elem.text))
-		case elem if elem.label == "input" => <span class="sourcespan" name={getInputName(elem)}></span>
-		case elem if elem.label == "textarea" => <span class="boxspan" name={getInputName(elem)}></span>
-		case elem => elem
+	private def toInputName(elem: Node): Option[String] = elem match {
+		case elem if elem.label == "input" || elem.label == "textarea" => Some(getInputName(elem))
+		case _ => None
 	}
 
-	private def parse(htmlTemplate: String): String = {
-		val mappedTemplate = loadString(htmlTemplate)
+	private def parse(htmlTemplate: String): Seq[String] = {
+		loadString(htmlTemplate)
 			.child
-			.flatMap(_.child.flatMap(_.child.flatMap(_.child.map(nodeToElabNode))))
-			.mkString("")
-
-
-		val element = <div class="sourcecode">
-			{mappedTemplate}
-		</div>
-
-		unescape(element.toString())
+			.flatMap(_.child.flatMap(_.child.flatMap(_.child.map(toInputName).filter(_.isDefined).map(_.get))))
 	}
 
 	def map(taskPadCreationResponse: TaskPadCreationResponse): TaskPad =

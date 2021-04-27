@@ -6,7 +6,7 @@ import play.api.libs.json.{Format, Json, JsonConfiguration}
 
 case class TaskPadPresenter(id: Int,
                             name: String,
-                            htmlTemplate: String,
+                            answerKeys: Seq[String],
                             language: String,
                             accessKey: String,
                             secretKey: String)
@@ -18,7 +18,7 @@ object TaskPadPresenter {
 	def from(taskPad: TaskPad): TaskPadPresenter =
 		TaskPadPresenter(id = taskPad.id,
 		                 name = taskPad.name,
-		                 htmlTemplate = taskPad.htmlTemplate,
+		                 answerKeys = taskPad.answerKeys,
 		                 language = taskPad.language,
 		                 accessKey = taskPad.accessKey,
 		                 secretKey = taskPad.secretKey)
