@@ -1,6 +1,6 @@
 package commons
 
-import play.api.libs.json.{Json, JsValue, Writes}
+import play.api.libs.json.{JsValue, Json, Writes}
 import play.api.mvc.Result
 import play.api.mvc.Results._
 
