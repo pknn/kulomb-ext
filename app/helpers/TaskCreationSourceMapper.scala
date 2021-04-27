@@ -20,9 +20,10 @@ object TaskCreationSourceMapper {
 			.concat("::elab:begincode\n")
 
 	private def parseSpan(elem: Node) = getClassName(elem) match {
-		case "sourcespan" => s"{{ ${elem.child.map(nodeToText).mkString("")} }}"
+		case "sourcespan" =>
+			if (elem.child.length > 1) getEnclosure(elem.child.map(nodeToText).mkString(""), "blank")
+			else s"{{ ${elem.child.map(nodeToText).mkString("")} }}"
 		case "hidespan" => getEnclosure(elem.child.map(nodeToText).mkString(""), "hidden")
-		case "boxspan" => getEnclosure(elem.child.map(nodeToText).mkString(""), "blank")
 	}
 
 	private def nodeToText(node: Node): String = node match {

@@ -16,6 +16,7 @@ object TaskCreationResponseMapper {
 			.replaceAll("&amp;quot;", "\"")
 			.replaceAll("&quot;", "\"")
 			.replaceAll("\n", "<br />")
+			.replaceAll("\t", "&nbsp;")
 
 	private def nodeToElabNode(elem: Node): Node = elem match {
 		case elem if elem.label == "span" => Text(unescape(elem.text))
