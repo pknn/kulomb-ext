@@ -27,15 +27,22 @@ object TaskCreationSourceMapper {
 		case elem => elem.text
 	}
 
-	private def parse(source: String): String = {
+	private def testCaseToText(testCase: String): String =
+		"::elab:begintest\n"
+			.concat(testCase.replaceAll(" ", "\n"))
+			.concat("\n::elab:endtest\n")
+
+
+	private def parse(source: String, testCases: Seq[String]): String = {
 		val replacedSource = source.replaceAll("&nbsp;", " ")
 
 		loadString(replacedSource)
 			.child
 			.flatMap(_.child.map(nodeToText).prepended("::elab:begincode\n").concat("::elab:endcode\n"))
+			.concat(testCases.map(testCaseToText))
 			.mkString("")
 	}
 
 	def map(taskCreationBody: TaskCreationBody): TaskCreationBody =
-		taskCreationBody.copy(source = parse(taskCreationBody.source))
+		taskCreationBody.copy(source = parse(taskCreationBody.source, taskCreationBody.testCases))
 }
