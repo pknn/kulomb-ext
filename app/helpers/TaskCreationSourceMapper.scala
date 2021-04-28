@@ -43,7 +43,7 @@ object TaskCreationSourceMapper {
 
 		loadString(replacedSource)
 			.child
-			.flatMap(_.child.map(nodeToText).prepended("::elab:begincode\n").concat("::elab:endcode\n"))
+			.flatMap(_.child.map(nodeToText).prepended("::elab:begincode\n").concat("\n::elab:endcode\n"))
 			.concat(testCases.map(testCaseToText))
 			.mkString("")
 	}
