@@ -40,7 +40,7 @@ object TaskCreationSourceMapper {
 
 	private def parse(source: String, testCases: Seq[String]): String = {
 		val replacedSource = source.replaceAll("&nbsp;", " ")
-
+		
 		loadString(replacedSource)
 			.child
 			.flatMap(_.child.map(nodeToText).prepended("::elab:begincode\n").concat("\n::elab:endcode\n"))

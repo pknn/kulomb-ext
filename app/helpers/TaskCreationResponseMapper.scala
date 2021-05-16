@@ -24,9 +24,11 @@ object TaskCreationResponseMapper {
 	}
 
 	private def parse(htmlTemplate: String): Seq[String] = {
-		loadString(htmlTemplate)
-			.child
-			.flatMap(_.child.flatMap(_.child.flatMap(_.child.map(toInputName).filter(_.isDefined).map(_.get))))
+		if (htmlTemplate.isEmpty) Seq.empty
+		else
+			loadString(htmlTemplate)
+				.child
+				.flatMap(_.child.flatMap(_.child.flatMap(_.child.map(toInputName).filter(_.isDefined).map(_.get))))
 	}
 
 	def map(taskPadCreationResponse: TaskPadCreationResponse): TaskPad =
