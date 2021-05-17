@@ -22,7 +22,7 @@ object TaskCreationSourceMapper {
 	private def parseSpan(elem: Node) = getClassName(elem) match {
 		case "sourcespan" =>
 			if (elem.child.length > 1) getEnclosure(elem.child.map(nodeToText).mkString(""), "blank")
-			else s"{{ ${elem.child.map(nodeToText).mkString("")} }}"
+			else s"{{${elem.child.map(nodeToText).mkString("")}}}"
 		case "hidespan" => getEnclosure(elem.child.map(nodeToText).mkString(""), "hidden")
 	}
 
